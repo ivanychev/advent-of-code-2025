@@ -1,7 +1,6 @@
-use log::info;
 use crate::args::Args;
 use crate::utils::read_input_lines;
-
+use log::info;
 
 pub enum Rotation {
     Left(u32),
@@ -15,7 +14,10 @@ pub struct Safe {
 
 impl Safe {
     pub fn new() -> Safe {
-        Safe { pos: 50u32, size: 100u32 }
+        Safe {
+            pos: 50u32,
+            size: 100u32,
+        }
     }
 
     pub fn rotate(&mut self, rotation: Rotation) {
@@ -38,18 +40,20 @@ impl Safe {
     }
 }
 
-pub fn read_rotations(input: &Vec<String>) -> Vec<Rotation> {
+impl Default for Safe {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub fn read_rotations(input: &[String]) -> Vec<Rotation> {
     input
         .iter()
         .map(|line| {
             let amount = line[1..].parse::<u32>().unwrap();
             match line {
-                l if l.starts_with("L") => {
-                    Rotation::Left(amount)
-                }
-                l if l.starts_with("R") => {
-                    Rotation::Right(amount)
-                }
+                l if l.starts_with("L") => Rotation::Left(amount),
+                l if l.starts_with("R") => Rotation::Right(amount),
                 _ => panic!("Invalid rotation line: {}", line),
             }
         })

@@ -1,6 +1,6 @@
 use aoc_2025::args::Args;
-use clap::Parser;
 use aoc_2025::days;
+use clap::Parser;
 use simple_logger::SimpleLogger;
 
 fn main() {
@@ -11,6 +11,4 @@ fn main() {
         1 => days::day1::main(&args),
         _ => panic!("Day {} is not yet implemented", args.day),
     }
-
-
 }
