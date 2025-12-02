@@ -1,5 +1,5 @@
 use crate::args::Args;
-use crate::utils::read_input_lines;
+use crate::utils::input::read_input_lines;
 use log::info;
 
 pub enum Rotation {

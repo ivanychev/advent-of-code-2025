@@ -9,6 +9,7 @@ fn main() {
     let args = Args::parse();
     match args.day {
         1 => days::day1::main(&args),
+        2 => days::day2::main(&args),
         _ => panic!("Day {} is not yet implemented", args.day),
     }
 }
