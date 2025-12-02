@@ -42,10 +42,10 @@ impl Iterator for RangeIterator {
 
 impl Range {
     fn from_str(s: &str) -> Range {
-        let parts: Vec<&str> = s.split('-').collect();
+        let (start, end) = s.split_once('-').unwrap();
         Range {
-            start: parts[0].parse().unwrap(),
-            end: parts[1].parse().unwrap(),
+            start: start.parse().unwrap(),
+            end: end.parse().unwrap(),
         }
     }
 
