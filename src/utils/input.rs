@@ -23,5 +23,6 @@ pub fn read_input_lines<S: AsRef<str>>(day: u32, part: Option<S>) -> Vec<String>
         })
         .lines()
         .map(String::from)
+        .filter(|line| !line.is_empty())
         .collect()
 }
