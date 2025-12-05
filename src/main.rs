@@ -12,6 +12,7 @@ fn main() {
         2 => days::day2::main(&args),
         3 => days::day3::main(&args),
         4 => days::day4::main(&args),
+        5 => days::day5::main(&args),
         _ => panic!("Day {} is not yet implemented", args.day),
     }
 }

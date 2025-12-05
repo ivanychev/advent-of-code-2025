@@ -8,3 +8,5 @@ log = { version = "0.4.28" }
 clap = { version = "4.5.53", features = ["derive"] }
 simple_logger = "5.1.0"
 num-traits = "0.2.19"
+range-collections = "0.4.6"
+smallvec = "1.15.1"
