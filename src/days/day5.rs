@@ -11,16 +11,18 @@ fn parse_range(s: &str) -> Range<i64> {
 
 pub fn main(args: &Args) {
     let lines = read_input_lines(args.day as u32, args.input_tag.as_deref());
-    let ranges = lines
+    let ranges: Vec<_> = lines
         .iter()
         .filter(|s| s.contains('-'))
         .map(|s| parse_range(s))
-        .collect::<Vec<Range<i64>>>();
-    let ids = lines
+        .collect();
+
+    let ids: Vec<_> = lines
         .iter()
         .filter(|s| !s.contains('-'))
         .map(|s| s.parse::<i64>().unwrap())
-        .collect::<Vec<i64>>();
+        .collect();
+
     let interval_tree = ranges.iter().fold(RangeSet2::<i64>::empty(), |mut acc, r| {
         acc.union_with(&RangeSet2::from(r.clone()));
         acc
@@ -28,7 +30,7 @@ pub fn main(args: &Args) {
 
     match args.part {
         1 => {
-            let fresh_count = ids.iter().filter(|id| interval_tree.contains(*id)).count();
+            let fresh_count = ids.iter().filter(|&id| interval_tree.contains(id)).count();
             println!("{}", fresh_count);
         }
         2 => {
