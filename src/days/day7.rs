@@ -2,7 +2,7 @@ use crate::args::Args;
 use crate::utils::input::read_input_lines;
 use crate::utils::point::Point;
 use smallvec::SmallVec;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq)]
 enum Cell {
@@ -66,6 +66,47 @@ impl Grid {
             splits: split_count,
         }
     }
+
+    fn count_trajectories(&self, beam: Point) -> usize {
+        let mut cache: HashMap<Point, usize> = HashMap::new();
+        self.count_trajectories_impl(beam, &mut cache)
+    }
+
+    fn count_trajectories_impl(&self, beam: Point, cache: &mut HashMap<Point, usize>) -> usize {
+        if beam.y == self.get_max_y() - 1 {
+            return 1;
+        }
+        if let Some(&cached) = cache.get(&beam) {
+            return cached;
+        };
+        let next_y = beam.y + 1;
+        if self.is_splitter(Point {
+            x: beam.x,
+            y: next_y,
+        }) {
+            let left_beam = Point {
+                x: beam.x - 1,
+                y: next_y,
+            };
+            let right_beam = Point {
+                x: beam.x + 1,
+                y: next_y,
+            };
+            let left_count = self.count_trajectories_impl(left_beam, cache);
+            let right_count = self.count_trajectories_impl(right_beam, cache);
+            let total = left_count + right_count;
+            cache.insert(beam, total);
+            total
+        } else {
+            let straight_beam = Point {
+                x: beam.x,
+                y: next_y,
+            };
+            let total = self.count_trajectories_impl(straight_beam, cache);
+            cache.insert(beam, total);
+            total
+        }
+    }
 }
 
 impl From<u8> for Cell {
@@ -107,16 +148,28 @@ impl From<Vec<String>> for Grid {
 pub fn main(args: &Args) {
     let lines = read_input_lines(args.day as u32, args.input_tag.as_deref());
     let grid = Grid::from(lines);
-    let mut current_y = 1;
-    let mut beams = vec![grid.start_pos];
-    let mut splits = 0;
-    while current_y < grid.get_max_y() {
-        let beam_result = grid.project_beams(&beams, current_y);
-        // println!("Beams at y={} : {:?}, splits={}", current_y, beam_result.beams, beam_result.splits);
-        beams = beam_result.beams;
-        splits += beam_result.splits;
-        current_y += 1;
-    }
 
-    println!("Solution: {}", splits);
+    match args.part {
+        1 => {
+            let mut current_y = 1;
+            let mut beams = vec![grid.start_pos];
+            let mut splits = 0;
+            while current_y < grid.get_max_y() {
+                let beam_result = grid.project_beams(&beams, current_y);
+                // println!("Beams at y={} : {:?}, splits={}", current_y, beam_result.beams, beam_result.splits);
+                beams = beam_result.beams;
+                splits += beam_result.splits;
+                current_y += 1;
+            }
+
+            println!("Solution: {}", splits);
+        }
+        2 => {
+            let total_trajectories = grid.count_trajectories(grid.start_pos);
+            println!("Solution: {}", total_trajectories);
+        }
+        _ => {
+            panic!("Part {} is not yet implemented", args.part);
+        }
+    }
 }
