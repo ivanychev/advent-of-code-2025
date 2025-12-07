@@ -1,10 +1,10 @@
 use crate::args::Args;
 use crate::utils::input::read_input_lines;
 use crate::utils::point::Point;
-use smallvec::SmallVec;
+use smallvec::{SmallVec, smallvec};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum Cell {
     Start,
     Splitter,
@@ -35,12 +35,9 @@ impl Grid {
             .iter()
             .flat_map(|p| {
                 let splitted: SmallVec<[Point; 2]> = if self.is_splitter(Point { x: p.x, y }) {
-                    SmallVec::<[Point; 2]>::from_buf([
-                        Point { x: p.x - 1, y },
-                        Point { x: p.x + 1, y },
-                    ])
+                    smallvec![Point { x: p.x - 1, y }, Point { x: p.x + 1, y }]
                 } else {
-                    SmallVec::<[Point; 2]>::new()
+                    smallvec![]
                 };
                 splitted.into_iter()
             })
@@ -80,32 +77,34 @@ impl Grid {
             return cached;
         };
         let next_y = beam.y + 1;
-        if self.is_splitter(Point {
+        let total = if self.is_splitter(Point {
             x: beam.x,
             y: next_y,
         }) {
-            let left_beam = Point {
-                x: beam.x - 1,
-                y: next_y,
-            };
-            let right_beam = Point {
-                x: beam.x + 1,
-                y: next_y,
-            };
-            let left_count = self.count_trajectories_impl(left_beam, cache);
-            let right_count = self.count_trajectories_impl(right_beam, cache);
-            let total = left_count + right_count;
-            cache.insert(beam, total);
-            total
+            let left_count = self.count_trajectories_impl(
+                Point {
+                    x: beam.x - 1,
+                    y: next_y,
+                },
+                cache,
+            );
+            let right_count = self.count_trajectories_impl(
+                Point {
+                    x: beam.x + 1,
+                    y: next_y,
+                },
+                cache,
+            );
+            left_count + right_count
         } else {
             let straight_beam = Point {
                 x: beam.x,
                 y: next_y,
             };
-            let total = self.count_trajectories_impl(straight_beam, cache);
-            cache.insert(beam, total);
-            total
-        }
+            self.count_trajectories_impl(straight_beam, cache)
+        };
+        cache.insert(beam, total);
+        total
     }
 }
 
