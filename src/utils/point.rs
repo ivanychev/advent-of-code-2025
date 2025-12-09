@@ -4,6 +4,16 @@ pub struct Point {
     pub y: usize,
 }
 
+impl From<&str> for Point {
+    fn from(s: &str) -> Self {
+        let (x_str, y_str) = s.split_once(',').unwrap();
+        Point {
+            x: x_str.parse().unwrap(),
+            y: y_str.parse().unwrap(),
+        }
+    }
+}
+
 impl Point {
     pub fn neighbours(&self, max_x: usize, max_y: usize) -> impl Iterator<Item = Point> {
         let mut neighbours: [Option<Point>; 8] = [None; 8];
