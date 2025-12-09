@@ -34,21 +34,6 @@ impl Vector {
 type BreakMergeFn<'a> =
     Box<dyn Fn(usize, Option<&Vec<usize>>, &'a VectorPair) -> (bool, &'a VectorPair) + 'a>;
 
-// struct Cluster {
-//     points: Vec<Vector>,
-// }
-
-// impl Cluster {
-//     fn distance(&self, other: &Cluster) -> f64 {
-//         iproduct!(self.points.iter(), other.points.iter())
-//             .map(|(v1, v2)| {
-//                 v1.distance(v2)
-//             })
-//             .reduce(f64::min)
-//             .unwrap()
-//     }
-// }
-
 impl Vector {
     fn from_string_and_index(s: &str, index: usize) -> Self {
         let coords: Vec<i64> = s
@@ -64,12 +49,6 @@ impl Vector {
         }
     }
 }
-
-// impl From<&str> for Cluster {
-//     fn from(s: &str) -> Self {
-//         Cluster { points: vec![Vector::from(s)] }
-//     }
-// }
 
 pub fn main(args: &Args) {
     let lines = read_input_lines(args.day as u32, args.input_tag.as_deref());
